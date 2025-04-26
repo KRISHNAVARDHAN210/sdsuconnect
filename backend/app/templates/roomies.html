@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Roomies - SDSU Connect</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background-color: #f5f5f5;
+    }
+    .navbar {
+      display: flex;
+      background-color: #C41230;
+      padding: 1rem 2rem;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+    .nav-links div {
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .filter-section {
+      margin: 2rem;
+      display: flex;
+      gap: 1rem;
+    }
+    select {
+      padding: 0.5rem;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    .roomies-list {
+      margin: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .roomie-card {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .roomie-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .roomie-pic {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: #ddd;
+    }
+    .roomie-details {
+      display: flex;
+      flex-direction: column;
+    }
+    .action-buttons {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .connect-btn, .accept-btn, .reject-btn, .message-btn, .remove-btn {
+      background-color: #C41230;
+      color: white;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .accept-btn {
+      background-color: green;
+    }
+    .reject-btn {
+      background-color: red;
+    }
+    .remove-btn {
+      background-color: black;
+    }
+    .connect-btn:hover, .accept-btn:hover, .reject-btn:hover, .message-btn:hover, .remove-btn:hover {
+      opacity: 0.8;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+  <div class="nav-links">
+    <div>LOGO</div>
+    <div>ROOMIES</div>
+    <div>NEST</div>
+    <div>FORUM</div>
+    <div>PROFILE</div>
+  </div>
+</div>
+
+<!-- Filters Section -->
+<div class="filter-section">
+  <select id="country-filter" onchange="loadRoomies()">
+    <option value="">All Countries</option>
+    <option>India</option>
+    <option>United States</option>
+    <option>Germany</option>
+    <option>Canada</option>
+    <option>UAE</option>
+  </select>
+
+  <select id="department-filter" onchange="loadRoomies()">
+    <option value="">All Departments</option>
+    <option>Masters in Computer Engineering (MS in ComPE)</option>
+    <option>Masters in Computer Science (MS in CS)</option>
+    <option>Undergraduate in Finance</option>
+    <option>Undergraduate in Business Administration</option>
+    <option>Masters in Electrical Engineering (MS in EE)</option>
+    <option>Undergraduate in Psychology</option>
+  </select>
+
+  <select id="connect-filter" onchange="loadRoomies()">
+    <option value="normal">Send Connects</option>
+    <option value="pending">Pending Invitations</option>
+    <option value="connected">My Connects</option>
+  </select>
+</div>
+
+<!-- Roomies List -->
+<div class="roomies-list" id="roomies-list">
+  <!-- Roomies will load here -->
+</div>
+
+<!-- JavaScript Section -->
+<script>
+async function loadRoomies() {
+  const country = document.getElementById('country-filter').value;
+  const department = document.getElementById('department-filter').value;
+  const connectStatus = document.getElementById('connect-filter').value;
+
+  const response = await fetch(`/roomies?country=${country}&department=${department}&status=${connectStatus}`);
+  const data = await response.json();
+
+  const list = document.getElementById('roomies-list');
+  list.innerHTML = '';
+
+  data.forEach(roomie => {
+    let actionButtons = '';
+
+    if (connectStatus === "normal") {
+      actionButtons = `<button class="connect-btn" onclick="sendConnect(${roomie.id})">Connect</button>`;
+    }
+    else if (connectStatus === "pending") {
+      actionButtons = `
+        <button class="accept-btn" onclick="acceptConnect(${roomie.id})">Accept</button>
+        <button class="reject-btn" onclick="rejectConnect(${roomie.id})">Reject</button>
+      `;
+    }
+    else if (connectStatus === "connected") {
+      actionButtons = `
+        <button class="message-btn" onclick="messageUser(${roomie.id})">Message</button>
+        <button class="remove-btn" onclick="removeConnect(${roomie.id})">Remove</button>
+      `;
+    }
+
+    const card = `
+      <div class="roomie-card">
+        <div class="roomie-info">
+          <div class="roomie-pic"></div>
+          <div class="roomie-details">
+            <strong>${roomie.name}</strong>
+            <div>${roomie.department}</div>
+            <div>Country: ${roomie.country}</div>
+          </div>
+        </div>
+        <div class="action-buttons">
+          ${actionButtons}
+        </div>
+      </div>
+    `;
+    list.innerHTML += card;
+  });
+}
+
+// Dummy Button Actions
+function sendConnect(id) { alert("Connect sent to user id " + id); }
+function acceptConnect(id) { alert("Accepted user id " + id); }
+function rejectConnect(id) { alert("Rejected user id " + id); }
+function messageUser(id) { alert("Messaging user id " + id); }
+function removeConnect(id) { alert("Removed connection with user id " + id); }
+
+// Load initially
+window.onload = loadRoomies;
+</script>
+
+</body>
+</html>

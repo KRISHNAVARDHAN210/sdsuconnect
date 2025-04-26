@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SDSU Connect - Profile</title>
+  <title>Profile - SDSU Connect</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
   <style>
     body {
       margin: 0;
@@ -30,22 +31,8 @@
       font-weight: bold;
       cursor: pointer;
     }
-    .profile-section {
-      text-align: center;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .profile-section img {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid white;
-      margin-bottom: 0.2rem;
-    }
 
-    /* Profile Container */
+    /* Profile Form */
     .profile-container {
       display: flex;
       margin: 2rem auto;
@@ -56,12 +43,21 @@
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
       flex-wrap: wrap;
     }
-    .left-profile {
-      flex: 0.4;
+    .left-profile, .right-profile {
+      flex: 0.5;
       padding: 1rem;
-      text-align: center;
+    }
+    input[type="text"], select, .select2-container {
+      width: 100%;
+      margin-bottom: 15px;
+      font-size: 1rem;
+      padding: 0.8rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
     }
     .profile-pic-container {
+      text-align: center;
       margin-bottom: 1rem;
     }
     .profile-picture {
@@ -70,44 +66,6 @@
       border-radius: 50%;
       object-fit: cover;
       border: 2px solid #C41230;
-    }
-    .left-profile input[type="text"] {
-      width: 90%;
-      padding: 0.8rem;
-      margin-bottom: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    .contact-info {
-      margin-top: 1rem;
-      text-align: left;
-      padding-left: 20px;
-    }
-    .contact-info div {
-      display: flex;
-      align-items: center;
-      margin-bottom: 1rem;
-    }
-    .contact-info img {
-      width: 20px;
-      height: 20px;
-      margin-right: 0.5rem;
-    }
-
-    /* Right Profile */
-    .right-profile {
-      flex: 0.6;
-      padding: 1rem;
-    }
-    .right-profile select, .right-profile input[type="text"] {
-      width: 100%;
-      padding: 0.8rem;
-      margin-bottom: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    .checkbox-group {
-      margin-top: 1rem;
     }
     .checkbox-group label {
       display: block;
@@ -127,15 +85,6 @@
     .save-btn:hover {
       background-color: #a50d24;
     }
-    @media (max-width: 900px) {
-      .profile-container {
-        flex-direction: column;
-      }
-      .left-profile, .right-profile {
-        flex: unset;
-        width: 100%;
-      }
-    }
   </style>
 </head>
 
@@ -144,13 +93,12 @@
 <!-- Navbar -->
 <div class="navbar">
   <div class="nav-links">
-    <div><img src="/static/sdsu-logo.png" alt="SDSU" style="height:40px;"></div>
+    <div>
+        <img src="C:\Users\ppagaria2278\Documents\Hackathon\sdsuconnect\backend\app\static\Logo.jpg" alt="SDSU Aztec Connect" style="height:40px;">
+      </div>
     <div>ROOMIES</div>
     <div>NEST</div>
     <div>FORUM</div>
-  </div>
-  <div class="profile-section">
-    <img src="/static/profile-icon2.png" alt="Profile">
     <div>PROFILE</div>
   </div>
 </div>
@@ -165,17 +113,8 @@
     </div>
     <input type="text" id="name" placeholder="Name">
     <input type="text" id="redid" placeholder="RedID">
-
-    <div class="contact-info">
-      <div>
-        <img src="https://img.icons8.com/ios-filled/50/000000/phone.png" alt="Phone">
-        <input type="text" id="phone" placeholder="Phone Number">
-      </div>
-      <div>
-        <img src="https://img.icons8.com/ios-filled/50/000000/new-post.png" alt="Email">
-        <input type="text" id="email" placeholder="Email Address">
-      </div>
-    </div>
+    <input type="text" id="phone" placeholder="Phone Number">
+    <input type="text" id="email" placeholder="Email Address">
   </div>
 
   <!-- Right Side -->
@@ -188,13 +127,24 @@
       <option>Female</option>
       <option>Other</option>
     </select>
-
+    <select id="department">
+        <option disabled selected>Select Department</option>
+        <option>Masters in Computer Engineering (MS in ComPE)</option>
+        <option>Masters in Computer Science (MS in CS)</option>
+        <option>Undergraduate in Finance</option>
+        <option>Undergraduate in Business Administration</option>
+        <option>Masters in Electrical Engineering (MS in EE)</option>
+        <option>Undergraduate in Psychology</option>
+      </select>
     <select id="country" multiple="multiple">
       <option>India</option>
       <option>United States</option>
       <option>Germany</option>
       <option>Canada</option>
+      <option>UAE</option>
     </select>
+
+    
 
     <select id="food" multiple="multiple">
       <option>Vegetarian</option>
@@ -219,44 +169,47 @@
 
 </div>
 
-<!-- Select2 and Save Script -->
+<!-- JS Section -->
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <script>
-  $(document).ready(function() {
-    $('#country').select2({ placeholder: "Select Countries" });
-    $('#food').select2({ placeholder: "Select Food Preferences" });
-    $('#languages').select2({ placeholder: "Select Languages" });
+$(document).ready(function() {
+  $('#country').select2({ placeholder: "Select Countries" });
+  $('#department').select2({ placeholder: "Select Department", minimumResultsForSearch: Infinity });
+  $('#food').select2({ placeholder: "Select Food Preferences" });
+  $('#languages').select2({ placeholder: "Select Languages" });
+  $('#gender').select2({ placeholder: "Select Gender", minimumResultsForSearch: Infinity });
+});
+
+async function saveProfile() {
+  const data = {
+    name: document.getElementById('name').value,
+    redid: document.getElementById('redid').value,
+    phone: document.getElementById('phone').value,
+    email: document.getElementById('email').value,
+    preferred_name: document.getElementById('preferred_name').value,
+    gender: document.getElementById('gender').value,
+    country: $('#country').val(),
+    department: document.getElementById('department').value,
+    food: $('#food').val(),
+    languages: $('#languages').val(),
+    roommates: document.getElementById('roommates').checked,
+    accommodation: document.getElementById('accommodation').checked
+  };
+
+  const response = await fetch('/save_profile', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
   });
 
-  async function saveProfile() {
-    const data = {
-      name: document.getElementById('name').value,
-      redid: document.getElementById('redid').value,
-      phone: document.getElementById('phone').value,
-      email: document.getElementById('email').value,
-      preferred_name: document.getElementById('preferred_name').value,
-      gender: document.getElementById('gender').value,
-      country: $('#country').val(),
-      food: $('#food').val(),
-      languages: $('#languages').val(),
-      roommates: document.getElementById('roommates').checked,
-      accommodation: document.getElementById('accommodation').checked
-    };
-
-    const response = await fetch('/save_profile', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(data)
-    });
-
-    if (response.ok) {
-      alert('Profile Updated Successfully!');
-    } else {
-      alert('Failed to update profile.');
-    }
+  if (response.ok) {
+    alert('Profile Updated Successfully!');
+  } else {
+    alert('Failed to update profile.');
   }
+}
 </script>
 
 </body>
