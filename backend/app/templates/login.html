@@ -169,16 +169,14 @@
 <div class="navbar">
   <div class="nav-links">
     <div>
-      <img src="C:\Users\ppagaria2278\Documents\Hackathon\sdsuconnect\backend\app\static\Logo.jpg" alt="SDSU Aztec Connect" style="height:40px;">
+      <img src="\static\Logo.jpg" alt="SDSU Aztec Connect" style="height:40px;">
     </div>
     <div>ROOMIES</div>
     <div>NEST</div>
     <div>FORUM</div>
   </div>
 
-  <div class="profile-section">
-    <img src="C:\Users\ppagaria2278\Documents\Hackathon\sdsuconnect\backend\app\static\profile.png" alt="Profile">
-    <div>PROFILE</div>
+
   </div>
 </div>
 
@@ -217,22 +215,23 @@ function togglePassword() {
 async function login() {
   const username = document.getElementById('username').value;
   const password = document.getElementById('password').value;
-  
+
   const response = await fetch('/login', {
     method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ username, password })
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password }),
+    redirect: 'follow' // optional (helps browsers)
   });
 
-  const data = await response.json();
-
-  if (response.ok) {localStorage.setItem('access_token',data.access_token);
-    alert('Login successful!');
-    window.location.href = '/profile.html'; // Redirect after successful login
+  if (response.ok) {
+    // MANUALLY redirect after success
+    window.location.href = '/profile';
   } else {
+    const data = await response.json();
     document.getElementById('error').innerText = data.detail || 'Login failed!';
   }
 }
+</script>
 </script>
 
 </body>

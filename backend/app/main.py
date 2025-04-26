@@ -1,18 +1,21 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from app.core.database import Base, engine
-from app.models.user import User
-from app.models.profile import Profile
-from app.routes import auth, profile as profile_route
+from app.routes import auth, profile, roommates, listings
 
 app = FastAPI()
 
-# Important: Create tables after importing models
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
+templates = Jinja2Templates(directory="app/templates")
+
 Base.metadata.create_all(bind=engine)
 
-# Include routers
-app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
-app.include_router(profile_route.router, prefix="/profile", tags=["Profile"])
-
 @app.get("/")
-def read_root():
-    return {"message": "Welcome to Aztec Connect API!"}
+async def home(request: Request):
+    return templates.TemplateResponse("login.html", {"request": request})
+
+app.include_router(auth.router)
+app.include_router(profile.router)
+app.include_router(roommates.router)
+app.include_router(listings.router)

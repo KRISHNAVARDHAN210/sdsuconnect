@@ -1,39 +1,44 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
-from app.core.database import get_db
-from app.models import profile as profile_model
-from app.schemas import profile as profile_schema
+from app.models.profile import Profile
+from app.schemas.profile import ProfileData
+from app.core.database import SessionLocal
+from fastapi.responses import JSONResponse
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse
 
 router = APIRouter()
+templates = Jinja2Templates(directory="app/templates")
 
-# CREATE Profile (POST)
-@router.post("/", response_model=profile_schema.ProfileOut)
-def create_profile(profile: profile_schema.ProfileCreate, db: Session = Depends(get_db)):
-    new_profile = profile_model.Profile(**profile.dict())
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+@router.get("/profile", response_class=HTMLResponse)
+async def profile_page(request: Request):
+    return templates.TemplateResponse("profile.html", {"request": request})
+
+@router.post("/save_profile")
+async def save_profile(profile: ProfileData, db: Session = Depends(get_db)):
+    new_profile = Profile(
+        user_id=1,  # (dummy user ID for now)
+        name=profile.name,
+        redid=profile.redid,
+        phone=profile.phone,
+        email=profile.email,
+        preferred_name=profile.preferred_name,
+        gender=profile.gender,
+        country=",".join(profile.country),
+        department=profile.department,
+        food=",".join(profile.food),
+        languages=",".join(profile.languages),
+        roommates=profile.roommates,
+        accommodation=profile.accommodation
+    )
     db.add(new_profile)
     db.commit()
     db.refresh(new_profile)
-    return new_profile
-
-# GET Profile
-@router.get("/", response_model=profile_schema.ProfileOut)
-def get_profile(db: Session = Depends(get_db)):
-    profile = db.query(profile_model.Profile).first()
-    if not profile:
-        raise HTTPException(status_code=404, detail="Profile not found")
-    return profile
-
-# UPDATE Profile (PUT)
-@router.put("/", response_model=profile_schema.ProfileOut)
-def update_profile(profile_update: profile_schema.ProfileUpdate, db: Session = Depends(get_db)):
-    profile = db.query(profile_model.Profile).first()
-    if not profile:
-        raise HTTPException(status_code=404, detail="Profile not found")
-
-    for key, value in profile_update.dict(exclude_unset=True).items():
-        setattr(profile, key, value)
-
-    db.commit()
-    db.refresh(profile)
-    return profile
-
+    return JSONResponse(content={"message": "Profile saved successfully!"})

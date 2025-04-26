@@ -1,28 +1,22 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
-from app.models import profile as profile_model
-from app.core.database import get_db
+from app.models.profile import Profile
+from app.schemas.profile import ProfileData
+from app.core.database import SessionLocal
+from fastapi.responses import JSONResponse
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse
 
 router = APIRouter()
+templates = Jinja2Templates(directory="app/templates")
 
-@router.get("/", tags=["Roommates"])
-def find_roommates(db: Session = Depends(get_db)):
-    # Get all profiles who need roommates
-    roommates = db.query(profile_model.Profile).filter(profile_model.Profile.need_roommates == True).all()
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
-    if not roommates:
-        raise HTTPException(status_code=404, detail="No roommates found!")
-
-    result = []
-
-    for profile in roommates:
-        result.append({
-            "first_name": profile.first_name,
-            "last_name": profile.last_name,
-            "city": profile.city,
-            "hobbies": profile.hobbies,
-            "languages_spoken": profile.languages_spoken,
-            "food_preference": profile.food_preference
-        })
-
-    return {"matches": result}
+@router.get("/roomies", response_class=HTMLResponse)
+async def profile_page(request: Request):
+    return templates.TemplateResponse("roomies.html", {"request": request})

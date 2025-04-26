@@ -1,13 +1,16 @@
-from sqlalchemy import Column, Integer, String
 from app.core.database import Base
+from sqlalchemy import Column, Integer, String, Float
 
 class Listing(Base):
     __tablename__ = "listings"
-
     id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, nullable=False)
-    description = Column(String, nullable=True)
-    rent = Column(Integer, nullable=False)
-    city = Column(String, nullable=False)
-    contact_info = Column(String, nullable=False)
-    date_available = Column(String, nullable=True)  # for simplicity, use string
+    building_name = Column(String)
+    address = Column(String)
+    campus_type = Column(String)
+    price = Column(Float)
+    sharing_type = Column(String)
+    lease_duration = Column(String)
+    availability_date = Column(String)
+    listed_by = Column(String)
+    lease_type = Column(String)
+    space = Column(String)

@@ -98,7 +98,7 @@
       border-radius: 50%;
       margin-bottom: 0.2rem;
       object-fit: cover;
-      border: 2px solid white;
+     
     }
   </style>
 </head>
@@ -109,16 +109,16 @@
 <div class="navbar">
     <div class="nav-links">
       <div>
-        <img src="C:\Users\ppagaria2278\Documents\Hackathon\sdsuconnect\backend\app\static\Logo.jpg" alt="SDSU Aztec Connect" style="height:40px;">
+        <img src="static\Logo.jpg" alt="SDSU Aztec Connect" style="height:40px;">
       </div>
-      <div>ROOMIES</div>
-      <div>NEST</div>
-      <div>FORUM</div>
+      <div><a href="/roomies_page" style="color: white; text-decoration: none;">ROOMIES</a></div>
+    <div><a href="/nest_page" style="color: white; text-decoration: none;">NEST</a></div>
+    <div><a href="/forum_page" style="color: white; text-decoration: none;">FORUM</a></div>
     </div>
   
     <div class="profile-section">
-      <img src="C:\Users\ppagaria2278\Documents\Hackathon\sdsuconnect\backend\app\static\profile.png" alt="Profile">
-      <div>PROFILE</div>
+      <img src="\static\profile.png" alt="Profile">
+      <div><u>PROFILE</u></div>
     </div>
   </div>
 
@@ -128,7 +128,7 @@
   <!-- Left Side -->
   <div class="left-profile">
     <div class="profile-pic-container">
-      <img src="/static/profile-icon2.png" alt="Profile Picture" class="profile-picture">
+      <img src="/static/profile.png" alt="Profile Picture" class="profile-picture">
     </div>
     <input type="text" id="name" placeholder="Name">
     <input type="text" id="redid" placeholder="RedID">
@@ -217,17 +217,15 @@ async function saveProfile() {
     accommodation: document.getElementById('accommodation').checked
   };
 
-  const response = await fetch('http://localhost:8000/profile', {
+  const response = await fetch('/save_profile', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 
-        'Authorization':'Bearer' +token
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data)
   });
 
   if (response.ok) {
     alert('Profile Updated Successfully!');
-    window.location.href = '/roomies.html';
+    window.location.href = '/roomies';   // 🔥 Redirect to ROOMIES page
   } else {
     alert('Failed to update profile.');
   }
