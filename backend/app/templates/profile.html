@@ -198,14 +198,17 @@ async function saveProfile() {
     accommodation: document.getElementById('accommodation').checked
   };
 
-  const response = await fetch('/save_profile', {
+  const response = await fetch('http://localhost:8000/profile', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 
+        'Authorization':'Bearer' +token
+    },
     body: JSON.stringify(data)
   });
 
   if (response.ok) {
     alert('Profile Updated Successfully!');
+    window.location.href = '/roomies.html';
   } else {
     alert('Failed to update profile.');
   }

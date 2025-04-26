@@ -226,9 +226,9 @@ async function login() {
 
   const data = await response.json();
 
-  if (response.ok) {
+  if (response.ok) {localStorage.setItem('access_token',data.access_token);
     alert('Login successful!');
-    window.location.href = '/home'; // Redirect after successful login
+    window.location.href = '/profile.html'; // Redirect after successful login
   } else {
     document.getElementById('error').innerText = data.detail || 'Login failed!';
   }

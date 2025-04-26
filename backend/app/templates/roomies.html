@@ -165,12 +165,17 @@ const dummyRoomies = [
   { id: 3, name: "Robert Brown", department: "Masters in Electrical Engineering (MS in EE)", country: "Germany" }
 ];
 
-function loadDummyRoomies() {
+async function loadDummyRoomies() {
+  const country = document.getElementById('country-filter').value;
+  const department = document.getElementById('department-filter').value;
   const connectStatus = document.getElementById('connect-filter').value;
   const list = document.getElementById('roomies-list');
   list.innerHTML = '';
 
-  dummyRoomies.forEach(roomie => {
+  const response = await fetch(`/roomies?country=${country}&department=${department}&status=${connectStatus}`);
+  const roomies = await response.json();
+
+  roomies.forEach(roomie => {
     let actionButtons = '';
 
     if (connectStatus === "normal") {
@@ -204,10 +209,10 @@ function loadDummyRoomies() {
             ${actionButtons}
           </div>
         </div>
-        <div class="hidden-details" id="details-${roomie.id}">
-          <p><strong>Food Preferences:</strong> Vegetarian</p>
-          <p><strong>Languages:</strong> English, Hindi</p>
-          <p><strong>Looking for:</strong> Roommates</p>
+        <div class="hidden-details" id="details-${roomie.id}" style="display:none;">
+          <p><strong>Food Preferences:</strong> ${roomie.food || "N/A"}</p>
+          <p><strong>Languages:</strong> ${roomie.languages || "N/A"}</p>
+          <p><strong>Looking for:</strong> ${roomie.roommates ? "Roommates" : "Accommodation"}</p>
         </div>
       </div>
     `;
