@@ -37,16 +37,16 @@ def register(new_user: user_schema.UserCreate, db: Session = Depends(database.ge
 @router.post("/login")
 def login(credentials: user_schema.UserLogin, db: Session = Depends(database.get_db)):
     user = db.query(user_model.User).filter(user_model.User.redid == credentials.redid).first()
-
     if not user or not security.verify_password(credentials.password, user.hashed_password):
         raise HTTPException(status_code=400, detail="Invalid RedID or password")
-    
-    token = security.create_access_token(
-        data={"sub": user.redid},
-        expires_delta=timedelta(minutes=30)
+
+    access_token_expires = timedelta(minutes=30)
+    access_token = security.create_access_token(
+        data={"sub": user.redid},  # << very important to have "sub"
+        expires_delta=access_token_expires
     )
-    
-    return {"access_token": token, "token_type": "bearer"}
+
+    return {"access_token": access_token, "token_type": "bearer"}
 
 @router.get("/me", response_model=user_schema.UserOut)
 def read_users_me(current_user: user_model.User = Depends(get_current_user)):

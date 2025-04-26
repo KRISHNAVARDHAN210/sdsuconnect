@@ -11,6 +11,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 
+# Add this function to allow database sessions in routes
 def get_db():
     db = SessionLocal()
     try:

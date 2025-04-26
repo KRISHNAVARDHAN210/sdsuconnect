@@ -12,7 +12,6 @@ class Profile(Base):
     last_name = Column(String, nullable=False)
     department = Column(String, nullable=False)
     student_type = Column(String, nullable=False)
-
     country = Column(String, nullable=False)
     city = Column(String, nullable=False)
     hobbies = Column(String, nullable=True)
