@@ -10,4 +10,4 @@ class Listing(Base):
     rent = Column(Integer, nullable=False)
     city = Column(String, nullable=False)
     contact_info = Column(String, nullable=False)
-    date_available = Column(String, nullable=True)  # for simplicity, use string
+    date_available = Column(String, nullable=True)

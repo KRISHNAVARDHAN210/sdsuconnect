@@ -11,4 +11,4 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
     role = Column(String, default="student")
 
-    profile = relationship("Profile", back_populates="user", uselist=False)
+    profile = relationship("app.models.profile.Profile", back_populates="user", uselist=False)

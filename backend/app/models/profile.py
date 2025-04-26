@@ -1,8 +1,6 @@
-from sqlalchemy import Boolean, Column, Integer, String, ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, String, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
-
-Base = declarative_base()
+from app.core.database import Base
 
 class Profile(Base):
     __tablename__ = "profiles"
@@ -25,4 +23,4 @@ class Profile(Base):
     need_accommodation = Column(Boolean, default=False)
     need_roommates = Column(Boolean, default=False)
 
-    user = relationship("User", back_populates="profile")
+    user = relationship("app.models.user.User", back_populates="profile")
