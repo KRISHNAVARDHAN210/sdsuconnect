@@ -1,20 +1,18 @@
 from pydantic import BaseModel, EmailStr, constr, validator
 
-class UserBase(BaseModel):
-    redid: constr(min_length=9, max_length=9)
-    email: EmailStr
+class UserCreate(BaseModel):
+    redid: str
+    email: str
+    password: str
 
-    @validator('email')
-    def validate_sdsu_email(cls, v):
-        if not v.endswith('@sdsu.edu'):
-            raise ValueError('Email must be an SDSU email ending with @sdsu.edu')
-        return v
+class UserLogin(BaseModel):
+    redid: str
+    password: str
 
-class UserCreate(UserBase):
-    password: str 
-
-class UserOut(UserBase):
+class UserOut(BaseModel):
     id: int
+    redid: str
+    email: str
     role: str
 
     class Config:
