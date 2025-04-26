@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SDSU Connect - Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    /* Navbar */
+    .navbar {
+      display: flex;
+      background-color: #C41230;
+      padding: 1rem 2rem;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .nav-links div {
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .nav-links div:hover {
+      text-decoration: underline;
+    }
+
+    .profile-section {
+      text-align: center;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .profile-section img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-bottom: 0.2rem;
+      object-fit: cover;
+      border: 2px solid white;
+    }
+
+    /* Main Container */
+    .main {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 2rem auto;
+      max-width: 1200px;
+      background-color: white;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    /* Left box */
+    .left-box {
+      flex: 0.6;
+      height: 450px;
+      overflow: hidden;
+      border-radius: 8px;
+    }
+
+    .campus-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    /* Login Box */
+    .login-box {
+      flex: 0.4;
+      padding: 2rem;
+    }
+
+    .login-box h2 {
+      margin-bottom: 1rem;
+    }
+
+    .login-box input[type=text], .login-box input[type=password] {
+      width: 100%;
+      padding: 0.8rem;
+      margin: 0.5rem 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .password-container {
+      position: relative;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 10px;
+      top: 38%;
+      cursor: pointer;
+      font-size: 1rem;
+      color: #888;
+    }
+
+    .login-box button {
+      width: 100%;
+      padding: 0.8rem;
+      margin-top: 1rem;
+      background-color: #C41230;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .login-box button:hover {
+      background-color: #a50d24;
+    }
+
+    .forgot-password {
+      display: block;
+      text-align: center;
+      margin-top: 0.5rem;
+      color: #666;
+      font-size: 0.9rem;
+      text-decoration: none;
+    }
+
+    .forgot-password:hover {
+      text-decoration: underline;
+    }
+
+    .error-message {
+      color: red;
+      text-align: center;
+      margin-top: 0.5rem;
+    }
+
+    @media (max-width: 900px) {
+      .main {
+        flex-direction: column;
+        padding: 1rem;
+      }
+      .left-box, .login-box {
+        flex: unset;
+        width: 100%;
+        margin: 0 0 1rem 0;
+      }
+      .left-box {
+        height: 250px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+  <div class="nav-links">
+    <div>LOGO</div>
+    <div>ROOMIES</div>
+    <div>NEST</div>
+    <div>FORUM</div>
+  </div>
+
+  <div class="profile-section">
+    <img src="C:\Users\ppagaria2278\Documents\Hackathon\sdsuconnect\backend\app\static\profile.png" alt="Profile">
+    <div>PROFILE</div>
+  </div>
+</div>
+
+<!-- Main content -->
+<div class="main">
+  <div class="left-box">
+    <img src="https://global-uploads.webflow.com/5f035f109555c1787ed64988/604f0f4ec269efc3422b76e8_Sdsumain.jpeg" alt="SDSU Campus" class="campus-image">
+  </div>
+
+  <div class="login-box">
+    <h2>Login</h2>
+    <input type="text" id="username" placeholder="RedID/SDSU Email ID">
+
+    <div class="password-container">
+      <input type="password" id="password" placeholder="Password">
+      <span class="toggle-password" onclick="togglePassword()">👁️</span>
+    </div>
+
+    <button onclick="login()">LOGIN</button>
+    <a href="#" class="forgot-password">FORGOT PASSWORD</a>
+
+    <div id="error" class="error-message"></div>
+  </div>
+</div>
+
+<script>
+function togglePassword() {
+  const pwd = document.getElementById('password');
+  if (pwd.type === 'password') {
+    pwd.type = 'text';
+  } else {
+    pwd.type = 'password';
+  }
+}
+
+async function login() {
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+  
+  const response = await fetch('/login', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ username, password })
+  });
+
+  const data = await response.json();
+
+  if (response.ok) {
+    alert('Login successful!');
+    window.location.href = '/home'; // Redirect after successful login
+  } else {
+    document.getElementById('error').innerText = data.detail || 'Login failed!';
+  }
+}
+</script>
+
+</body>
+</html>
