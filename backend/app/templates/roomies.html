@@ -50,10 +50,19 @@
       border-radius: 8px;
       box-shadow: 0 0 5px rgba(0,0,0,0.1);
       display: flex;
+      flex-direction: column;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .roomie-card:hover {
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    .roomie-info {
+      display: flex;
       align-items: center;
       justify-content: space-between;
     }
-    .roomie-info {
+    .roomie-basic {
       display: flex;
       align-items: center;
       gap: 1rem;
@@ -92,6 +101,14 @@
     .connect-btn:hover, .accept-btn:hover, .reject-btn:hover, .message-btn:hover, .remove-btn:hover {
       opacity: 0.8;
     }
+    .hidden-details {
+      display: none;
+      background-color: #f9f9f9;
+      padding: 0.8rem;
+      margin-top: 0.8rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
   </style>
 </head>
 
@@ -100,7 +117,6 @@
 <!-- Navbar -->
 <div class="navbar">
   <div class="nav-links">
-    <div>LOGO</div>
     <div>ROOMIES</div>
     <div>NEST</div>
     <div>FORUM</div>
@@ -108,9 +124,9 @@
   </div>
 </div>
 
-<!-- Filters Section -->
+<!-- Filters -->
 <div class="filter-section">
-  <select id="country-filter" onchange="loadRoomies()">
+  <select id="country-filter" onchange="loadDummyRoomies()">
     <option value="">All Countries</option>
     <option>India</option>
     <option>United States</option>
@@ -119,7 +135,7 @@
     <option>UAE</option>
   </select>
 
-  <select id="department-filter" onchange="loadRoomies()">
+  <select id="department-filter" onchange="loadDummyRoomies()">
     <option value="">All Departments</option>
     <option>Masters in Computer Engineering (MS in ComPE)</option>
     <option>Masters in Computer Science (MS in CS)</option>
@@ -129,7 +145,7 @@
     <option>Undergraduate in Psychology</option>
   </select>
 
-  <select id="connect-filter" onchange="loadRoomies()">
+  <select id="connect-filter" onchange="loadDummyRoomies()">
     <option value="normal">Send Connects</option>
     <option value="pending">Pending Invitations</option>
     <option value="connected">My Connects</option>
@@ -138,53 +154,60 @@
 
 <!-- Roomies List -->
 <div class="roomies-list" id="roomies-list">
-  <!-- Roomies will load here -->
+  <!-- Dummy cards will load here -->
 </div>
 
-<!-- JavaScript Section -->
 <script>
-async function loadRoomies() {
-  const country = document.getElementById('country-filter').value;
-  const department = document.getElementById('department-filter').value;
+// Dummy Data
+const dummyRoomies = [
+  { id: 1, name: "John Doe", department: "Masters in Computer Science (MS in CS)", country: "India" },
+  { id: 2, name: "Jane Smith", department: "Undergraduate in Finance", country: "Canada" },
+  { id: 3, name: "Robert Brown", department: "Masters in Electrical Engineering (MS in EE)", country: "Germany" }
+];
+
+function loadDummyRoomies() {
   const connectStatus = document.getElementById('connect-filter').value;
-
-  const response = await fetch(`/roomies?country=${country}&department=${department}&status=${connectStatus}`);
-  const data = await response.json();
-
   const list = document.getElementById('roomies-list');
   list.innerHTML = '';
 
-  data.forEach(roomie => {
+  dummyRoomies.forEach(roomie => {
     let actionButtons = '';
 
     if (connectStatus === "normal") {
-      actionButtons = `<button class="connect-btn" onclick="sendConnect(${roomie.id})">Connect</button>`;
+      actionButtons = `<button class="connect-btn" onclick="sendConnect(event, ${roomie.id})">Connect</button>`;
     }
     else if (connectStatus === "pending") {
       actionButtons = `
-        <button class="accept-btn" onclick="acceptConnect(${roomie.id})">Accept</button>
-        <button class="reject-btn" onclick="rejectConnect(${roomie.id})">Reject</button>
+        <button class="accept-btn" onclick="acceptConnect(event, ${roomie.id})">Accept</button>
+        <button class="reject-btn" onclick="rejectConnect(event, ${roomie.id})">Reject</button>
       `;
     }
     else if (connectStatus === "connected") {
       actionButtons = `
-        <button class="message-btn" onclick="messageUser(${roomie.id})">Message</button>
-        <button class="remove-btn" onclick="removeConnect(${roomie.id})">Remove</button>
+        <button class="message-btn" onclick="messageUser(event, ${roomie.id})">Message</button>
+        <button class="remove-btn" onclick="removeConnect(event, ${roomie.id})">Remove</button>
       `;
     }
 
     const card = `
-      <div class="roomie-card">
+      <div class="roomie-card" onclick="toggleDetails(${roomie.id})">
         <div class="roomie-info">
-          <div class="roomie-pic"></div>
-          <div class="roomie-details">
-            <strong>${roomie.name}</strong>
-            <div>${roomie.department}</div>
-            <div>Country: ${roomie.country}</div>
+          <div class="roomie-basic">
+            <div class="roomie-pic"></div>
+            <div class="roomie-details">
+              <strong>${roomie.name}</strong>
+              <div>${roomie.department}</div>
+              <div>Country: ${roomie.country}</div>
+            </div>
+          </div>
+          <div class="action-buttons" id="action-${roomie.id}">
+            ${actionButtons}
           </div>
         </div>
-        <div class="action-buttons">
-          ${actionButtons}
+        <div class="hidden-details" id="details-${roomie.id}">
+          <p><strong>Food Preferences:</strong> Vegetarian</p>
+          <p><strong>Languages:</strong> English, Hindi</p>
+          <p><strong>Looking for:</strong> Roommates</p>
         </div>
       </div>
     `;
@@ -192,15 +215,43 @@ async function loadRoomies() {
   });
 }
 
-// Dummy Button Actions
-function sendConnect(id) { alert("Connect sent to user id " + id); }
-function acceptConnect(id) { alert("Accepted user id " + id); }
-function rejectConnect(id) { alert("Rejected user id " + id); }
-function messageUser(id) { alert("Messaging user id " + id); }
-function removeConnect(id) { alert("Removed connection with user id " + id); }
+function toggleDetails(id) {
+  const details = document.getElementById(`details-${id}`);
+  if (details.style.display === "none" || details.style.display === "") {
+    details.style.display = "block";
+  } else {
+    details.style.display = "none";
+  }
+}
+
+function sendConnect(event, id) {
+  event.stopPropagation(); // Prevents card click
+  const actionDiv = document.getElementById(`action-${id}`);
+  actionDiv.innerHTML = `<div style="color: green; font-weight: bold;">Sent ✅</div>`;
+}
+
+function acceptConnect(event, id) {
+  event.stopPropagation();
+  alert("Accepted user id " + id);
+}
+
+function rejectConnect(event, id) {
+  event.stopPropagation();
+  alert("Rejected user id " + id);
+}
+
+function messageUser(event, id) {
+  event.stopPropagation();
+  alert("Messaging user id " + id);
+}
+
+function removeConnect(event, id) {
+  event.stopPropagation();
+  alert("Removed connection with user id " + id);
+}
 
 // Load initially
-window.onload = loadRoomies;
+window.onload = loadDummyRoomies;
 </script>
 
 </body>
